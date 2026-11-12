@@ -1,0 +1,61 @@
+schema_version: 1
+
+context:
+  version: "1.3.3"
+
+package:
+  name: mido
+  version: ${{ version }}
+
+source:
+  url: https://files.pythonhosted.org/packages/source/m/mido/mido-${{ version }}.tar.gz
+  sha256: 1aecb30b7f282404f17e43768cbf74a6a31bf22b3b783bdd117a1ce9d22cb74c
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - mido-play = mido.scripts.mido_play:main
+      - mido-ports = mido.scripts.mido_ports:main
+      - mido-serve = mido.scripts.mido_serve:main
+      - mido-connect = mido.scripts.mido_connect:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=61.0.0
+    - setuptools-scm
+    - pip
+  run:
+    - python >=${{ python_min }},<4.dev0
+    - packaging
+    - python-rtmidi
+
+tests:
+  - python:
+      imports:
+        - mido
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - script:
+      - mido-play --help
+      - mido-ports --help
+      - mido-serve --help
+      - mido-connect --help
+
+about:
+  summary: MIDI Objects for Python
+  license: MIT
+  license_file: LICENSE
+  homepage:  https://mido.readthedocs.io/
+  repository: https://github.com/mido/mido
+
+extra:
+  recipe-maintainers:
+    - Walter-0
+    - mxr-conda
+    - HeavyTony2
